@@ -1,0 +1,282 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="theme-color" content="#07111f"><title>NB4 Life V5</title><style>
+:root{--bg:#07111f;--p:#11263d;--l:#2d4864;--t:#f5f8fc;--m:#a3b6ca;--g:#52e3a2;--r:#ff747b;--b:#63b8ff;--y:#ffd166}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+body{margin:0;background:var(--bg);color:var(--t);font:15px system-ui,-apple-system,sans-serif;padding-bottom:calc(140px + env(safe-area-inset-bottom));-webkit-text-size-adjust:100%}
+header{position:sticky;top:0;z-index:5;background:#07111ff2;padding:10px 12px;border-bottom:1px solid var(--l)}
+h1{font-size:20px;margin:0}
+small,.muted{color:var(--m)}
+main{padding:8px;max-width:850px;margin:auto}
+.card{background:var(--p);border:1px solid var(--l);border-radius:14px;margin:8px 0;overflow:hidden}
+h2{font-size:15px;margin:0;padding:11px;border-bottom:1px solid var(--l)}
+.pad{padding:11px}
+button,input,textarea{font:inherit;font-size:16px;border:1px solid var(--l);border-radius:10px;min-height:44px}
+button{font-weight:850;background:var(--b);color:#06101c;padding:8px;cursor:pointer;-webkit-appearance:none;appearance:none;touch-action:manipulation}
+.alt{background:#29445f;color:#fff}
+.mine{background:var(--g)}
+.gone{background:var(--r);color:#280306}
+.slotgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.slotgrid button{min-height:46px}
+.slotgrid button.on{background:var(--g);outline:2px solid white}
+.pickline{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:end}
+.pickline input{width:100%;background:#081827;color:#fff;padding:8px;-webkit-appearance:none;appearance:none}
+.rec{padding:14px;background:linear-gradient(135deg,#123c39,#15324d)}
+.rec h3{font-size:28px;margin:3px 0}
+.score{font-size:27px;font-weight:900;color:var(--g)}
+.prob{font-weight:900;color:var(--y)}
+.bar{height:6px;background:#2b4255;border-radius:8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--g)}
+.why{background:#071a27;padding:9px;border-radius:8px;margin:8px 0}
+.row{display:grid;grid-template-columns:33px 1fr auto;gap:8px;align-items:center;padding:9px;border-bottom:1px solid var(--l)}
+.num{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;background:#205071;font-weight:900}
+.name{font-size:17px;font-weight:900}
+.needs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.need{background:#081a2a;border-radius:8px;padding:8px;text-align:center}
+.need b{display:block;font-size:12px}
+.run{background:#3b2d17;color:#ffe39b;padding:3px 7px;border-radius:6px;font-size:11px;font-weight:800}
+.log{max-height:260px;overflow:auto;font-size:13px;-webkit-overflow-scrolling:touch}
+.log div{display:flex;justify-content:space-between;padding:7px;border-bottom:1px solid var(--l)}
+textarea{width:100%;min-height:110px;background:#081827;color:#fff;padding:9px;-webkit-appearance:none;appearance:none}
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#07111ff5;border-top:1px solid #526d87;padding:8px 10px calc(8px + env(safe-area-inset-bottom));box-shadow:0 -8px 28px #000c}
+.search{display:grid;grid-template-columns:1fr 52px;gap:7px}
+.search input{width:100%;height:48px;background:#fff;color:#111;border:3px solid var(--g);font-weight:900;padding:9px;-webkit-appearance:none;appearance:none;font-size:16px}
+.actions{display:grid;grid-template-columns:1fr 1fr 60px;gap:7px;margin-top:7px}
+.sheet{display:none;position:fixed;left:8px;right:8px;bottom:calc(130px + env(safe-area-inset-bottom));z-index:29;background:#142d46;border:1px solid #607b95;border-radius:13px;max-height:47vh;overflow:auto;-webkit-overflow-scrolling:touch;box-shadow:0 10px 40px #000}
+.sheet.show{display:block}
+.result{display:grid;grid-template-columns:1fr auto;padding:11px;border-bottom:1px solid var(--l)}
+.result.sel{outline:2px solid var(--g);background:#184661}
+details summary{padding:11px;font-weight:800;cursor:pointer}
+#saveBtn{width:100%;background:#29445f;color:#fff;margin-top:8px;border-radius:10px;padding:10px;border:1px solid var(--l)}
+#saveBar{display:none;background:#0d1f30;border-top:1px solid var(--l);padding:9px 11px;font-size:13px;color:var(--m)}
+@media(min-width:760px){.dock{max-width:850px;left:50%;transform:translateX(-50%)}.sheet{max-width:830px;left:50%;transform:translateX(-50%)}}
+</style></head><body>
+<header><h1>🏈 NB 4 Life Draft Assistant V5</h1><small>Fully offline • iPhone controls • opponent-aware</small></header><main>
+<section class="card"><h2>1. Select your snake slot</h2><div class="pad"><div class="slotgrid" id="slots"><button data-slot="1">1</button><button data-slot="2">2</button><button data-slot="3">3</button><button data-slot="4">4</button><button data-slot="5">5</button><button data-slot="6">6</button><button data-slot="7">7</button><button data-slot="8">8</button><button data-slot="9">9</button><button data-slot="10">10</button><button data-slot="11">11</button><button data-slot="12">12</button></div><div class="pickline" style="margin-top:9px"><label>Current overall pick<input id="pick" type="number" min="1" max="192" value="1" inputmode="numeric"></label><div id="slotStatus" class="muted">Tap a slot above</div></div></div></section>
+<section class="card"><h2>Best pick now</h2><div id="rec" class="pad muted">Select a draft slot to begin.</div></section>
+<section class="card"><h2>Top 5 options</h2><div id="top"></div></section>
+<section class="card"><h2>Your roster and needs</h2><div class="pad needs" id="needs"></div></section>
+<section class="card"><h2>Runs and opponent pressure</h2><div class="pad" id="runs"></div></section>
+<section class="card"><h2>Recent picks</h2><div class="pad"><button class="alt" id="undo">UNDO LAST</button><button class="alt" id="reset">RESET DRAFT</button><div class="log" id="log"></div></div></section>
+<section class="card"><details><summary>Bulk catch-up mode</summary><div class="pad"><textarea id="bulk" placeholder="Paste one player per line, in exact draft order" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea><button class="gone" id="bulkAdd" style="width:100%;margin-top:7px">ADD AS OTHER PICKS</button><div class="muted" style="font-size:12px;margin-top:5px">Use the MY PICK button separately for your own selection. Unmatched names are reported and not added.</div><div id="bulkMsg" class="muted"></div></div></details></section>
+<section class="card"><div class="pad">
+  <div style="font-size:13px;color:var(--m);margin-bottom:6px">💾 Save / restore progress (use on iPhone to keep draft state)</div>
+  <button id="saveBtn">COPY SAVE CODE</button>
+  <button id="loadBtn" class="alt" style="width:100%;margin-top:7px">PASTE &amp; RESTORE</button>
+  <div id="saveBar"></div>
+</div></section>
+</main>
+<div class="sheet" id="sheet"></div>
+<div class="dock">
+  <div class="search"><input id="q" placeholder="Search player drafted..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="search"><button class="alt" id="clear">×</button></div>
+  <div class="actions"><button class="mine" id="mine">MY PICK</button><button class="gone" id="gone">OTHER PICK</button><button class="alt" id="undo2">↶</button></div>
+</div>
+<script>
+(function(){'use strict';
+var raw=`1|Jahmyr Gibbs|DET|RB|1
+2|Bijan Robinson|ATL|RB|2
+3|Ja'Marr Chase|CIN|WR|3
+4|Puka Nacua|LAR|WR|4
+5|Christian McCaffrey|SF|RB|5
+6|Jaxon Smith-Njigba|SEA|WR|6
+7|Jonathan Taylor|IND|RB|7
+8|Amon-Ra St. Brown|DET|WR|8
+9|James Cook III|BUF|RB|10.7
+10|CeeDee Lamb|DAL|WR|10.7
+11|De'Von Achane|MIA|RB|11
+12|Justin Jefferson|MIN|WR|11.7
+13|Ashton Jeanty|LV|RB|12.3
+14|Saquon Barkley|PHI|RB|13.7
+15|Chase Brown|CIN|RB|16.3
+16|Drake London|ATL|WR|18
+17|Omarion Hampton|LAC|RB|18.3
+18|Kenneth Walker III|KC|RB|18.3
+19|Derrick Henry|BAL|RB|18.3
+20|Trey McBride|ARI|TE|18.7
+21|A.J. Brown|NE|WR|20.7
+22|Josh Allen|BUF|QB|22.3
+23|Brock Bowers|LV|TE|22.7
+24|Jeremiyah Love|ARI|RB|25.3
+25|George Pickens|DAL|WR|25.3
+26|Nico Collins|HOU|WR|25.7
+27|Rashee Rice|KC|WR|26.7
+28|Chris Olave|NO|WR|27.3
+29|Malik Nabers|NYG|WR|29
+30|Javonte Williams|DAL|RB|30
+31|Breece Hall|NYJ|RB|31.3
+32|Josh Jacobs|GB|RB|31.7
+33|Kyren Williams|LAR|RB|32.3
+34|DeVonta Smith|PHI|WR|36.7
+35|Zay Flowers|BAL|WR|37.7
+36|Tetairoa McMillan|CAR|WR|38.3
+37|Garrett Wilson|NYJ|WR|39.7
+38|Lamar Jackson|BAL|QB|40
+39|Cam Skattebo|NYG|RB|40.3
+40|Travis Etienne Jr.|NO|RB|40.7
+41|Emeka Egbuka|TB|WR|41
+42|Colston Loveland|CHI|TE|42.3
+43|Ladd McConkey|LAC|WR|42.7
+44|Bucky Irving|TB|RB|43.7
+45|Tee Higgins|CIN|WR|44.7
+46|Quinshon Judkins|CLE|RB|45.7
+47|D.J. Moore|BUF|WR|49
+48|Tyler Warren|IND|TE|49.3
+49|Davante Adams|LAR|WR|49.7
+50|Jaylen Waddle|DEN|WR|50.3
+51|David Montgomery|HOU|RB|51.3
+52|Drake Maye|NE|QB|51.7
+53|D'Andre Swift|CHI|RB|53.3
+54|Luther Burden III|CHI|WR|55
+55|Terry McLaurin|WAS|WR|55.3
+56|Joe Burrow|CIN|QB|56
+57|TreVeyon Henderson|NE|RB|57.3
+58|Bhayshul Tuten|JAC|RB|58
+59|Jameson Williams|DET|WR|58.3
+60|Rome Odunze|CHI|WR|60.3
+61|Jayden Daniels|WAS|QB|61.3
+62|Jadarian Price|SEA|RB|61.3
+63|Jalen Hurts|PHI|QB|61.7
+64|Harold Fannin Jr.|CLE|TE|64
+65|Christian Watson|GB|WR|66
+66|Mike Evans|SF|WR|67
+67|Tucker Kraft|GB|TE|69
+68|Sam LaPorta|DET|TE|73
+69|Dak Prescott|DAL|QB|75
+70|Matthew Golden|GB|WR|78
+71|Michael Pittman Jr.|IND|WR|84
+72|Caleb Williams|CHI|QB|92
+73|Wan'Dale Robinson|NYG|WR|95
+74|Isaiah Likely|NYG|TE|104
+75|Justin Herbert|LAC|QB|106
+76|Jalen McMillan|TB|WR|110
+77|Brock Purdy|SF|QB|110
+78|Adonai Mitchell|IND|WR|127
+79|Jared Goff|DET|QB|127
+80|Terrance Ferguson|LAR|TE|132
+81|Baker Mayfield|TB|QB|138
+82|Kenyon Sadiq|IND|TE|138
+83|Kenny Gainwell|TB|RB|142
+84|Keaton Mitchell|BAL|RB|150
+85|Tyler Shough|NO|QB|155
+86|Jordan Love|GB|QB|158
+87|Pittsburgh Steelers|PIT|DST|165
+88|Denver Broncos|DEN|DST|170
+89|Brandon Aubrey|DAL|K|175`;
+
+var $=function(id){return document.getElementById(id)};
+var players=raw.split('\n').map(function(x){var a=x.split('|');return{rank:+a[0],name:a[1],team:a[2],pos:a[3],adp:+a[4],drafted:false}});
+var state={slot:0,draft:[]};
+var selected='';
+
+// Storage: try localStorage, fall back silently (Safari file:// blocks it)
+function save(){
+  var data=JSON.stringify({players:players,state:state,pick:$('pick').value});
+  try{localStorage.setItem('nb4v5',data);}catch(e){}
+  return data;
+}
+function load(){
+  try{
+    var x=JSON.parse(localStorage.getItem('nb4v5'));
+    if(x){players=x.players;state=x.state;$('pick').value=x.pick||1;}
+  }catch(e){}
+}
+
+function owner(pk){var r=Math.ceil(pk/12),w=(pk-1)%12+1;return r%2?w:13-w}
+function nextMine(){if(!state.slot)return 0;for(var n=+$('pick').value;n<+$('pick').value+36;n++)if(owner(n)===state.slot)return n;return 0}
+function round(){return Math.ceil(+$('pick').value/12)}
+function counts(team){var c={QB:0,RB:0,WR:0,TE:0,DST:0,K:0};state.draft.filter(function(x){return team==='ME'?x.kind==='ME':x.team===team}).forEach(function(x){c[x.pos]=(c[x.pos]||0)+1});return c}
+function need(pos){var c=counts('ME');if(pos==='QB')return Math.max(0,1-c.QB)*(round()>5?1.25:.55);if(pos==='RB')return Math.max(0,2-c.RB)*1.3+(c.RB<5?.3:0);if(pos==='WR')return Math.max(0,2-c.WR)*1.25+(c.WR<5?.3:0);if(pos==='TE')return Math.max(0,1-c.TE)*(round()>4?1.15:.65);if(pos==='K'||pos==='DST')return round()<12?-3:Math.max(0,1-c[pos]);return 0}
+function pressure(pos){var x=0,end=nextMine();for(var n=+$('pick').value;n<end;n++){var c=counts(owner(n));if(pos==='RB')x+=c.RB<2?1.1:c.RB<4?.5:.1;else if(pos==='WR')x+=c.WR<2?1.05:c.WR<5?.45:.1;else if(pos==='QB')x+=c.QB<1&&round()>4?.6:.05;else if(pos==='TE')x+=c.TE<1&&round()>4?.5:.05}return x}
+function run(pos){return state.draft.slice(-6).filter(function(x){return x.kind==='OTHER'&&x.pos===pos}).length}
+function survive(p){if(!state.slot)return 50;var gap=nextMine()-+$('pick').value,z=(p.adp-+$('pick').value-gap*.78-pressure(p.pos)*1.7)/8;return Math.max(2,Math.min(98,Math.round(100/(1+Math.exp(-z)))))}
+function score(p){var early=(p.pos==='K'||p.pos==='DST')&&round()<12?-35:0,reach=p.adp>+$('pick').value+20?-Math.min(25,(p.adp-+$('pick').value-20)*.7):0,ppr=p.pos==='WR'?4:p.pos==='RB'?2.5:p.pos==='TE'?2:0;return Math.round((115-p.rank*.55+(p.adp-+$('pick').value)*.34+need(p.pos)*12+ppr+(p.pos==='QB'?-3:0)+early+(100-survive(p))*.1+Math.min(7,run(p.pos)*1.7)+reach)*10)/10}
+function why(p){var a=[];if(need(p.pos)>1)a.push('fills a major roster need');if(survive(p)<35)a.push('is unlikely to return');if(run(p.pos)>=2)a.push(p.pos+' run detected');if(p.adp<+$('pick').value)a.push('has fallen past ADP');return a.length?a.join(', '):'best blend of rank, roster fit and market timing'}
+
+function render(){
+  document.querySelectorAll('[data-slot]').forEach(function(b){b.classList.toggle('on',+b.dataset.slot===state.slot)});
+  $('slotStatus').textContent=state.slot?'Slot '+state.slot+' selected • next pick '+nextMine():'Tap a slot above';
+  var a=players.filter(function(p){return !p.drafted}).sort(function(x,y){return score(y)-score(x)}),p=a[0];
+  $('rec').innerHTML=!state.slot?'<div class="muted">Tap your snake slot above to activate recommendations.</div>':`<div class="rec"><small>OVERALL PICK ${$('pick').value} • YOUR NEXT PICK ${nextMine()}</small><h3>${p.name}</h3><b>${p.team} • ${p.pos} • ADP ${p.adp}</b><div class="score">${score(p)}</div><div class="prob">${survive(p)}% chance to reach your next pick</div><div class="bar"><i style="width:${survive(p)}%"></i></div><div class="why">${why(p)}</div><button class="mine" data-rec="${p.name}">MY PICK</button></div>`;
+  $('top').innerHTML=a.slice(0,5).map(function(p,i){return`<div class="row"><span class="num">${i+1}</span><span><span class="name">${p.name}</span><br><small>${p.team} • ${p.pos} • ADP ${p.adp} • ${survive(p)}% to next</small></span><span class="score" style="font-size:18px">${score(p)}</span></div>`}).join('');
+  var c=counts('ME');
+  $('needs').innerHTML=['QB','RB','WR','TE','DST','K'].map(function(x){var n=need(x),color=n>1?'var(--r)':n>.2?'var(--y)':'var(--g)';return`<div class="need">${x}<b style="color:${color}">${c[x]} • ${n>1?'HIGH':n>.2?'MED':'LOW'}</b></div>`}).join('');
+  $('runs').innerHTML=['QB','RB','WR','TE'].map(function(x){return`<span class="run">${x}: ${run(x)>=2?'RUN ('+run(x)+')':'no run'} • pressure ${pressure(x).toFixed(1)}</span>`}).join(' ');
+  $('log').innerHTML=state.draft.slice().reverse().slice(0,30).map(function(x){return`<div><span>${x.pick}. ${x.name} (${x.pos})</span><b>${x.kind==='ME'?'MY TEAM':'TEAM '+x.team}</b></div>`}).join('');
+  var rb=document.querySelector('[data-rec]');
+  if(rb)rb.onclick=function(){draft(rb.dataset.rec,'ME')};
+  save();quick();
+}
+
+function draft(name,kind){
+  if(!state.slot){alert('Select your snake slot first.');return}
+  var p=players.find(function(x){return x.name===name&&!x.drafted});
+  if(!p)return;
+  var pk=+$('pick').value;
+  p.drafted=true;
+  state.draft.push({name:p.name,pos:p.pos,pick:pk,team:kind==='ME'?state.slot:owner(pk),kind:kind});
+  $('pick').value=pk+1;
+  $('q').value='';selected='';render();
+}
+function matches(){
+  var z=$('q').value.trim().toLowerCase();
+  return z?players.filter(function(p){return !p.drafted&&(p.name+' '+p.team+' '+p.pos).toLowerCase().includes(z)}).sort(function(a,b){return(a.name.toLowerCase().startsWith(z)?-1:0)-(b.name.toLowerCase().startsWith(z)?-1:0)||score(b)-score(a)}).slice(0,8):[];
+}
+function quick(){
+  var m=matches();
+  if(!$('q').value.trim()){$('sheet').classList.remove('show');return}
+  if(!selected||!m.some(function(x){return x.name===selected}))selected=m[0]?m[0].name:'';
+  $('sheet').innerHTML=m.length?m.map(function(p){return`<div class="result ${p.name===selected?'sel':''}" data-name="${p.name.replaceAll('"','&quot;')}"><span><b>${p.name}</b><br><small>${p.team} • ${p.pos} • ADP ${p.adp}</small></span><span><b>${score(p)}</b><br><small>${survive(p)}% lasts</small></span></div>`}).join(''):'<div class="pad">No available player found</div>';
+  $('sheet').classList.add('show');
+  document.querySelectorAll('[data-name]').forEach(function(e){e.onclick=function(){selected=e.dataset.name;quick()}});
+}
+function qdraft(kind){var m=matches(),n=selected||(m[0]?m[0].name:'');if(n){draft(n,kind);$('q').focus()}}
+function undo(){var x=state.draft.pop();if(x){var p=players.find(function(p){return p.name===x.name});if(p)p.drafted=false;$('pick').value=Math.max(1,+$('pick').value-1);render()}}
+
+// Save/restore via clipboard (works on iPhone without localStorage)
+$('saveBtn').onclick=function(){
+  var code=btoa(JSON.stringify({players:players,state:state,pick:$('pick').value}));
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(code).then(function(){
+      $('saveBar').style.display='block';
+      $('saveBar').textContent='✅ Save code copied to clipboard! Paste it back with PASTE & RESTORE.';
+    }).catch(function(){showCode(code)});
+  }else{showCode(code);}
+};
+function showCode(code){
+  $('saveBar').style.display='block';
+  $('saveBar').innerHTML='Copy this code:<br><textarea style="width:100%;height:80px;font-size:11px;margin-top:5px;background:#081827;color:#fff;border:1px solid var(--l);border-radius:6px;padding:5px" readonly>'+code+'</textarea>';
+}
+$('loadBtn').onclick=function(){
+  var code=prompt('Paste your save code:');
+  if(!code)return;
+  try{
+    var x=JSON.parse(atob(code.trim()));
+    if(x){players=x.players;state=x.state;$('pick').value=x.pick||1;}
+    $('saveBar').style.display='block';
+    $('saveBar').textContent='✅ Draft restored!';
+    render();
+  }catch(e){alert('Invalid save code — check that you copied it completely.');}
+};
+
+document.querySelectorAll('[data-slot]').forEach(function(b){b.onclick=function(){state.slot=+b.dataset.slot;render()}});
+$('pick').onchange=render;
+$('q').oninput=quick;
+$('q').onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();qdraft('OTHER')}};
+$('clear').onclick=function(){$('q').value='';selected='';quick();$('q').focus()};
+$('mine').onclick=function(){qdraft('ME')};
+$('gone').onclick=function(){qdraft('OTHER')};
+$('undo').onclick=undo;
+$('undo2').onclick=undo;
+$('reset').onclick=function(){if(confirm('Reset the entire draft?')){players.forEach(function(p){p.drafted=false});state.draft=[];$('pick').value=1;render()}};
+$('bulkAdd').onclick=function(){
+  var bad=[];
+  $('bulk').value.split(/\n/).map(function(x){return x.trim()}).filter(Boolean).forEach(function(n){
+    var z=n.toLowerCase(),p=players.find(function(x){return !x.drafted&&(x.name.toLowerCase()===z||x.name.toLowerCase().includes(z))});
+    if(p)draft(p.name,'OTHER');else bad.push(n);
+  });
+  $('bulk').value='';
+  $('bulkMsg').textContent=bad.length?'Not matched: '+bad.join(', '):'All names added.';
+  render();
+};
+
+load();render();
+})();
+</script></body></html>
